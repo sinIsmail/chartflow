@@ -239,10 +239,10 @@ export function ChartStudio() {
               <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
                 Data Source
               </span>
-              <div className="flex gap-2">
+              <div className="flex gap-1">
                 <HistoryDialog />
-                <SettingsDialog />
                 <PromptDialog />
+                <SettingsDialog />
               </div>
             </div>
             <FileUpload onData={handleData} onRawFile={handleRawFile} onError={handleError} />

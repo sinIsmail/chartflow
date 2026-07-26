@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,6 +18,8 @@ import {
   FIELD_DESCRIPTIONS,
 } from "@/lib/prompt-template";
 import { useSettings } from "@/hooks/use-settings";
+import { ClipboardList, Check, Copy, Code2, Sparkles, Database } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function PromptDialog() {
   const { allSettings, updateGlobalSettings } = useSettings();
@@ -32,109 +35,128 @@ export function PromptDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" id="prompt-btn" aria-label="Open JSON format prompt">
-          📋 Prompt
+        <Button variant="outline" size="icon" className="w-8 h-8 rounded-full border-border bg-surface shadow-sm hover:bg-surface-2 hover:text-foreground transition-all" title="System Prompt">
+          <ClipboardList className="w-4 h-4 text-muted-foreground" />
         </Button>
       </DialogTrigger>
 
-      <DialogContent
-        style={{ maxWidth: 680, maxHeight: "85vh", overflow: "hidden", display: "flex", flexDirection: "column" }}
-      >
-        <DialogHeader>
-          <DialogTitle style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            JSON Format Guide
-            <Badge variant="secondary" style={{ fontSize: 10 }}>Universal Schema</Badge>
-          </DialogTitle>
-        </DialogHeader>
-
-        <Tabs defaultValue="schema" style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-          <TabsList style={{ marginBottom: 12 }}>
-            <TabsTrigger value="schema">Schema</TabsTrigger>
-            <TabsTrigger value="example">Example JSON</TabsTrigger>
-            <TabsTrigger value="ai">System Prompt</TabsTrigger>
-          </TabsList>
-
-          {/* Schema fields tab */}
-          <TabsContent value="schema" style={{ flex: 1, overflowY: "auto" }}>
-            <p style={{ color: "var(--text-muted)", fontSize: 13, marginBottom: 16 }}>
-              All chart types use the same JSON format. Here are all the fields:
-            </p>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-              <thead>
-                <tr style={{ borderBottom: "1px solid var(--border)" }}>
-                  {["Field", "Type", "Required", "Description"].map((h) => (
-                    <th key={h} style={{ textAlign: "left", padding: "6px 8px", color: "var(--text-muted)", fontWeight: 600 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {FIELD_DESCRIPTIONS.map((f) => (
-                  <tr key={f.field} style={{ borderBottom: "1px solid var(--border)" }}>
-                    <td style={{ padding: "8px", fontFamily: "monospace", color: "var(--accent)", fontSize: 12 }}>{f.field}</td>
-                    <td style={{ padding: "8px", fontFamily: "monospace", color: "var(--text-muted)", fontSize: 12 }}>{f.type}</td>
-                    <td style={{ padding: "8px" }}>
-                      <Badge variant={f.required ? "default" : "secondary"} style={{ fontSize: 10 }}>
-                        {f.required ? "Yes" : "No"}
-                      </Badge>
-                    </td>
-                    <td style={{ padding: "8px", color: "var(--text)", fontSize: 12 }}>{f.desc}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </TabsContent>
-
-          {/* Example JSON tab */}
-          <TabsContent value="example" style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 12 }}>
-            <p style={{ color: "var(--text-muted)", fontSize: 13, margin: 0 }}>
-              Copy this template, fill in your data, and upload:
-            </p>
-            <div style={{ position: "relative" }}>
-              <pre style={{
-                background: "var(--surface-2)", border: "1px solid var(--border)",
-                borderRadius: 8, padding: 16, fontSize: 12, overflowX: "auto",
-                color: "var(--text)", margin: 0, lineHeight: 1.6,
-              }}>
-                {SCHEMA_TEMPLATE}
-              </pre>
-              <Button
-                size="sm" variant="outline"
-                onClick={() => copy(SCHEMA_TEMPLATE, "template")}
-                style={{ position: "absolute", top: 8, right: 8, fontSize: 11 }}
-                aria-label="Copy JSON template"
-              >
-                {copied === "template" ? "✅ Copied!" : "Copy"}
-              </Button>
+      <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden border-border shadow-2xl bg-surface h-[85vh] flex flex-col">
+        <div className="p-6 pb-4 border-b border-border bg-surface-2">
+          <DialogHeader>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-xl font-heading font-bold flex items-center gap-2">
+                Prompt & Schema Guide
+                <Badge variant="secondary" className="bg-accent text-accent hover:bg-accent/20 border-accent text-[10px] uppercase tracking-wider">Universal Schema</Badge>
+              </DialogTitle>
             </div>
-          </TabsContent>
+            <DialogDescription className="text-muted-foreground text-sm mt-1.5">
+              Customize the AI extraction instructions or review the expected JSON schema.
+            </DialogDescription>
+          </DialogHeader>
+        </div>
 
-          {/* System Prompt Editor tab */}
-          <TabsContent value="ai" style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 12 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-              <p style={{ color: "var(--text-muted)", fontSize: 13, margin: 0 }}>
-                Customize the system prompt used by ChartFlow's AI extraction engine:
-              </p>
-              <Button
-                variant="ghost" size="sm" style={{ height: 24, fontSize: 10 }}
-                onClick={() => updateGlobalSettings({ systemPrompt: "" })}
-              >
-                Reset to Default
-              </Button>
+        <Tabs defaultValue="ai" className="flex-1 flex flex-col overflow-hidden">
+          <div className="px-6 pt-4">
+            <TabsList className="w-full grid grid-cols-3 bg-surface-2 border border-border">
+              <TabsTrigger value="ai" className="data-[state=active]:bg-surface data-[state=active]:text-foreground data-[state=active]:shadow-sm text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                System Prompt
+              </TabsTrigger>
+              <TabsTrigger value="schema" className="data-[state=active]:bg-surface data-[state=active]:text-foreground data-[state=active]:shadow-sm text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+                <Database className="w-3.5 h-3.5" />
+                Data Schema
+              </TabsTrigger>
+              <TabsTrigger value="example" className="data-[state=active]:bg-surface data-[state=active]:text-foreground data-[state=active]:shadow-sm text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+                <Code2 className="w-3.5 h-3.5" />
+                Example JSON
+              </TabsTrigger>
+            </TabsList>
+          </div>
+
+          <ScrollArea className="flex-1">
+            <div className="p-6">
+              
+              {/* System Prompt Editor tab */}
+              <TabsContent value="ai" className="m-0 h-full flex flex-col space-y-4 animate-fade-in">
+                <div className="flex justify-between items-center bg-accent border border-accent rounded-lg p-3">
+                  <p className="text-sm text-muted-foreground font-medium">
+                    This prompt instructs the LLM on how to parse your unstructured text into ChartFlow's schema.
+                  </p>
+                  <Button
+                    variant="outline" size="sm"
+                    className="h-8 text-xs font-bold bg-surface border-border hover:bg-surface-2"
+                    onClick={() => updateGlobalSettings({ systemPrompt: "" })}
+                  >
+                    Reset to Default
+                  </Button>
+                </div>
+                
+                <textarea
+                  className="flex-1 min-h-[350px] w-full rounded-xl border border-border bg-surface p-4 font-mono text-[13px] text-foreground shadow-inner focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent/50 transition-colors resize-none leading-relaxed custom-scrollbar"
+                  placeholder={AI_PROMPT_TEMPLATE}
+                  value={allSettings.systemPrompt || ""}
+                  onChange={(e) => updateGlobalSettings({ systemPrompt: e.target.value })}
+                />
+              </TabsContent>
+
+              {/* Schema fields tab */}
+              <TabsContent value="schema" className="m-0 space-y-4 animate-fade-in">
+                <div className="bg-surface-2 border border-border rounded-xl overflow-hidden">
+                  <table className="w-full text-sm text-left">
+                    <thead className="bg-surface-2 text-xs uppercase text-muted-foreground font-bold tracking-wider border-b border-border">
+                      <tr>
+                        <th className="px-4 py-3">Field</th>
+                        <th className="px-4 py-3">Type</th>
+                        <th className="px-4 py-3 text-center">Required</th>
+                        <th className="px-4 py-3">Description</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border/20">
+                      {FIELD_DESCRIPTIONS.map((f) => (
+                        <tr key={f.field} className="hover:bg-surface transition-colors">
+                          <td className="px-4 py-3 font-mono text-[13px] text-accent font-semibold">{f.field}</td>
+                          <td className="px-4 py-3 font-mono text-[13px] text-muted-foreground">{f.type}</td>
+                          <td className="px-4 py-3 text-center">
+                            {f.required ? (
+                              <Badge variant="default" className="bg-accent/20 text-accent hover:bg-accent/30 border-none text-[10px]">YES</Badge>
+                            ) : (
+                              <Badge variant="secondary" className="bg-surface-2 text-muted-foreground hover:bg-surface-2 border-none text-[10px]">NO</Badge>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-muted-foreground text-[13px] leading-relaxed">{f.desc}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </TabsContent>
+
+              {/* Example JSON tab */}
+              <TabsContent value="example" className="m-0 space-y-4 animate-fade-in">
+                <div className="relative group">
+                  <div className="absolute right-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      size="sm"
+                      className={`h-8 gap-1.5 shadow-md ${copied === 'template' ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-surface border-border hover:bg-surface-2 text-foreground'}`}
+                      onClick={() => copy(SCHEMA_TEMPLATE, "template")}
+                    >
+                      {copied === "template" ? (
+                        <><Check className="w-3.5 h-3.5" /> Copied</>
+                      ) : (
+                        <><Copy className="w-3.5 h-3.5" /> Copy JSON</>
+                      )}
+                    </Button>
+                  </div>
+                  <pre className="p-5 rounded-xl bg-[#0d0d12] border border-border overflow-x-auto custom-scrollbar">
+                    <code className="text-[13px] font-mono leading-relaxed text-[#e2e8f0]">
+                      {SCHEMA_TEMPLATE}
+                    </code>
+                  </pre>
+                </div>
+              </TabsContent>
+
             </div>
-            
-            <textarea
-              style={{
-                flex: 1,
-                background: "var(--surface-2)", border: "1px solid var(--border)",
-                borderRadius: 8, padding: 16, fontSize: 12,
-                color: "var(--text)", margin: 0, lineHeight: 1.6,
-                fontFamily: "monospace", resize: "none", width: "100%", outline: "none"
-              }}
-              placeholder={AI_PROMPT_TEMPLATE}
-              value={allSettings.systemPrompt || ""}
-              onChange={(e) => updateGlobalSettings({ systemPrompt: e.target.value })}
-            />
-          </TabsContent>
+          </ScrollArea>
         </Tabs>
       </DialogContent>
     </Dialog>

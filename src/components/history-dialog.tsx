@@ -47,15 +47,15 @@ export function HistoryDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" aria-label="Processing History">
-          <History className="size-4" />
+        <Button variant="outline" size="icon" className="w-8 h-8 rounded-full border-border bg-surface shadow-sm hover:bg-surface-2 hover:text-foreground transition-all" title="Processing History">
+          <History className="w-4 h-4 text-muted-foreground" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto custom-scrollbar flex flex-col">
         <DialogHeader className="flex flex-row items-center justify-between">
           <DialogTitle>Processing History</DialogTitle>
           {history.length > 0 && (
-            <Button variant="ghost" size="sm" className="h-8 text-xs text-destructive hover:bg-destructive/10 gap-1 mr-4" onClick={clearHistory}>
+            <Button variant="ghost" size="sm" className="h-8 text-xs text-destructive hover:bg-destructive gap-1 mr-4" onClick={clearHistory}>
               <Trash2 className="size-3" />
               Clear
             </Button>
@@ -70,7 +70,7 @@ export function HistoryDialog() {
           ) : (
             <div className="space-y-2">
               {history.map((item) => (
-                <div key={item.id} className="flex flex-col p-3 rounded-lg border border-border bg-surface-2/50 text-sm">
+                <div key={item.id} className="flex flex-col p-3 rounded-lg border border-border bg-surface-2 text-sm">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-2">
                       {item.status === "success" ? (
@@ -92,7 +92,7 @@ export function HistoryDialog() {
                     {item.chunks && <div><span className="font-semibold">Chunks:</span> {item.chunks}</div>}
                   </div>
                   {item.errorMessage && (
-                    <div className="mt-2 text-xs text-destructive bg-destructive/10 p-2 rounded">
+                    <div className="mt-2 text-xs text-destructive bg-destructive p-2 rounded">
                       {item.errorMessage}
                     </div>
                   )}

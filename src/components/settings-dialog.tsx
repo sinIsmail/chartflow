@@ -17,10 +17,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Settings as SettingsIcon, Loader2, Plus, Trash2 } from "lucide-react";
+import { Settings as SettingsIcon, Loader2, Plus, Trash2, CheckCircle2, Server, Key, Bot } from "lucide-react";
 import { useSettings, LLMProvider, AIProfile } from "@/hooks/use-settings";
 import { fetchAvailableModels } from "@/lib/ai/models-fetcher";
 import { toast } from "sonner";
+import { Separator } from "@/components/ui/separator";
 
 export function SettingsDialog() {
   const { settings, allSettings, updateGlobalSettings, addProfile, updateProfile, removeProfile, isLoaded } = useSettings();
@@ -28,7 +29,6 @@ export function SettingsDialog() {
   const [isTesting, setIsTesting] = useState(false);
   const [availableModels, setAvailableModels] = useState<string[]>([]);
   const [testError, setTestError] = useState<string | null>(null);
-  const [isAddingNew, setIsAddingNew] = useState(false);
 
   if (!isLoaded) return null;
 
@@ -70,172 +70,194 @@ export function SettingsDialog() {
       apiKey: "",
       model: "gpt-4o-mini",
     });
-    setIsAddingNew(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2" aria-label="AI Settings">
-          <SettingsIcon className="size-4" />
-          Settings
+        <Button variant="outline" size="icon" className="w-8 h-8 rounded-full border-border bg-surface shadow-sm hover:bg-surface-2 hover:text-foreground transition-all" title="Settings">
+          <SettingsIcon className="w-4 h-4 text-muted-foreground" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px] max-h-[85vh] overflow-y-auto custom-scrollbar">
-        <DialogHeader>
-          <DialogTitle>AI Processing Settings</DialogTitle>
-          <DialogDescription>
-            Manage your AI connections and models. API keys are stored securely in your browser.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden border-border shadow-2xl bg-surface">
+        <div className="p-6 pb-4 border-b border-border bg-surface-2">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-heading font-bold">AI Configuration</DialogTitle>
+            <DialogDescription className="text-muted-foreground text-sm mt-1.5">
+              Connect to your favorite LLM provider. Keys are securely stored in your local browser session.
+            </DialogDescription>
+          </DialogHeader>
+        </div>
 
-        <div className="grid gap-5 py-4">
+        <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
           
-          {/* Connection Profile Selector */}
-          <div className="grid gap-2">
-            <label className="text-sm font-heading font-bold text-foreground">
-              Active Connection Profile
-            </label>
-            <div className="flex gap-2">
+          {/* Profile Selector row */}
+          <div className="flex items-end gap-3">
+            <div className="flex-1 space-y-2">
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                Active Profile
+              </label>
               <Select
                 value={allSettings.activeProfileId}
                 onValueChange={(val) => {
                   updateGlobalSettings({ activeProfileId: val });
-                  setAvailableModels([]); // Reset models for new connection
+                  setAvailableModels([]);
                 }}
               >
-                <SelectTrigger className="flex-1 font-medium">
+                <SelectTrigger className="w-full h-10 bg-surface border-border shadow-sm focus:ring-accent">
                   <SelectValue placeholder="Select a profile" />
                 </SelectTrigger>
                 <SelectContent>
                   {allSettings.profiles.map(p => (
-                    <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                    <SelectItem key={p.id} value={p.id} className="font-medium cursor-pointer">
+                      {p.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <Button 
-                variant="outline" 
-                size="icon"
-                onClick={handleCreateNewProfile}
-                title="Create New Profile"
+            </div>
+            
+            <Button 
+              variant="outline" 
+              className="h-10 w-10 p-0 border-border shadow-sm hover:bg-surface-2 hover:text-foreground text-muted-foreground transition-all"
+              onClick={handleCreateNewProfile}
+              title="Add New Profile"
+            >
+              <Plus className="w-5 h-5" />
+            </Button>
+            
+            {allSettings.profiles.length > 1 && (
+              <Button
+                variant="outline"
+                className="h-10 w-10 p-0 border-destructive/20 bg-destructive/5 text-destructive hover:bg-destructive hover:text-white transition-all shadow-sm"
+                onClick={() => removeProfile(settings.id)}
+                title="Delete Profile"
               >
-                <Plus className="w-4 h-4" />
+                <Trash2 className="w-4 h-4" />
               </Button>
-            </div>
+            )}
           </div>
 
-          {/* Connection Configuration */}
-          <div className="bg-surface-2 border border-border rounded-lg p-4 space-y-3 relative group">
-            <div className="flex items-center justify-between">
-              <h3 className="font-heading font-bold text-sm text-foreground flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                Connection Details
-              </h3>
-              <div className="flex gap-2">
-                {allSettings.profiles.length > 1 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 w-7 p-0 text-destructive hover:bg-destructive/10"
-                    onClick={() => removeProfile(settings.id)}
-                    title="Delete Profile"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                )}
+          <Separator className="bg-border/30" />
+
+          {/* Form Fields */}
+          <div className="space-y-5 animate-fade-in">
+            {/* Row 1: Profile Name & Provider */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                  Profile Name
+                </label>
+                <input
+                  type="text"
+                  value={settings.name}
+                  onChange={(e) => updateProfile(settings.id, { name: e.target.value })}
+                  className="w-full h-10 rounded-md border border-border bg-surface px-3 text-sm shadow-sm transition-colors focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent"
+                />
               </div>
-            </div>
-            <div className="space-y-3 pt-2 animate-fade-in">
-                <div className="grid gap-1">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    Profile Name
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.name}
-                    onChange={(e) => updateProfile(settings.id, { name: e.target.value })}
-                    className="flex h-8 w-full rounded-md border border-input bg-transparent px-3 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
-                  />
-                </div>
 
-                <div className="grid gap-1">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    LLM Provider
-                  </label>
-                  <Select
-                    value={settings.provider}
-                    onValueChange={(val: LLMProvider) => updateProfile(settings.id, { provider: val })}
-                  >
-                    <SelectTrigger className="h-8 text-xs">
-                      <SelectValue placeholder="Select provider" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="openai">OpenAI</SelectItem>
-                      <SelectItem value="openrouter">OpenRouter</SelectItem>
-                      <SelectItem value="groq">Groq</SelectItem>
-                      <SelectItem value="ollama">Ollama (Local)</SelectItem>
-                      <SelectItem value="lmstudio">LM Studio (Local)</SelectItem>
-                      <SelectItem value="custom">Custom Endpoint</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="grid gap-1">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    API Endpoint
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.endpoint}
-                    onChange={(e) => updateProfile(settings.id, { endpoint: e.target.value })}
-                    className="flex h-8 w-full rounded-md border border-input bg-transparent px-3 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
-                  />
-                </div>
-                
-                <div className="grid gap-1">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    API Key
-                  </label>
-                  <input
-                    type="password"
-                    value={settings.apiKey}
-                    onChange={(e) => updateProfile(settings.id, { apiKey: e.target.value })}
-                    className="flex h-8 w-full rounded-md border border-input bg-transparent px-3 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
-                    placeholder="sk-..."
-                  />
-                </div>
-
-                <div className="grid gap-1">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    Target Model
-                  </label>
-                  <input
-                    type="text"
-                    list={`models-${settings.id}`}
-                    value={settings.model}
-                    onChange={(e) => updateProfile(settings.id, { model: e.target.value })}
-                    className="flex h-8 w-full rounded-md border border-input bg-transparent px-3 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
-                    placeholder="e.g. gpt-4o-mini"
-                  />
-                  <datalist id={`models-${settings.id}`}>
-                    {allModels.map(m => (
-                      <option key={m} value={m} />
-                    ))}
-                  </datalist>
-                </div>
-
-                <Button 
-                  className="w-full h-8 text-xs mt-2 bg-accent text-white hover:bg-accent/90 rounded-md"
-                  onClick={() => handleTestConnection(settings)}
-                  disabled={isTesting || !settings.endpoint}
+              <div className="space-y-2">
+                <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                  <Server className="w-3.5 h-3.5 text-muted-foreground" />
+                  Provider
+                </label>
+                <Select
+                  value={settings.provider}
+                  onValueChange={(val: LLMProvider) => updateProfile(settings.id, { provider: val })}
                 >
-                  {isTesting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save & Test Connection"}
-                </Button>
-                {testError && (
-                  <p className="text-[10px] text-destructive text-center">{testError}</p>
-                )}
+                  <SelectTrigger className="h-10 border-border bg-surface shadow-sm focus:ring-accent">
+                    <SelectValue placeholder="Select provider" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="openai">OpenAI</SelectItem>
+                    <SelectItem value="openrouter">OpenRouter</SelectItem>
+                    <SelectItem value="groq">Groq</SelectItem>
+                    <SelectItem value="ollama">Ollama (Local)</SelectItem>
+                    <SelectItem value="lmstudio">LM Studio (Local)</SelectItem>
+                    <SelectItem value="custom">Custom Endpoint</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
+            </div>
+
+            {/* Row 2: API Endpoint */}
+            <div className="space-y-2">
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <Server className="w-3.5 h-3.5 text-muted-foreground" />
+                API Endpoint URL
+              </label>
+              <input
+                type="text"
+                value={settings.endpoint}
+                onChange={(e) => updateProfile(settings.id, { endpoint: e.target.value })}
+                className="w-full h-10 rounded-md border border-border bg-surface px-3 text-sm shadow-sm transition-colors focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent font-mono text-[13px]"
+              />
+            </div>
+            
+            {/* Row 3: API Key & Model */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                  <Key className="w-3.5 h-3.5 text-muted-foreground" />
+                  API Key
+                </label>
+                <input
+                  type="password"
+                  value={settings.apiKey}
+                  onChange={(e) => updateProfile(settings.id, { apiKey: e.target.value })}
+                  placeholder="sk-..."
+                  className="w-full h-10 rounded-md border border-border bg-surface px-3 text-sm shadow-sm transition-colors focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent font-mono text-[13px] placeholder:text-muted-foreground"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                  <Bot className="w-3.5 h-3.5 text-muted-foreground" />
+                  Model ID
+                </label>
+                <input
+                  type="text"
+                  list={`models-${settings.id}`}
+                  value={settings.model}
+                  onChange={(e) => updateProfile(settings.id, { model: e.target.value })}
+                  className="w-full h-10 rounded-md border border-border bg-surface px-3 text-sm shadow-sm transition-colors focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent font-mono text-[13px] placeholder:text-muted-foreground"
+                  placeholder="e.g. gpt-4o"
+                />
+                <datalist id={`models-${settings.id}`}>
+                  {allModels.map(m => (
+                    <option key={m} value={m} />
+                  ))}
+                </datalist>
+              </div>
+            </div>
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="p-6 pt-4 border-t border-border bg-surface-2 flex flex-col items-center">
+          <Button 
+            className="w-full h-11 text-sm font-bold bg-accent text-white hover:bg-accent/90 rounded-lg shadow-md transition-all flex items-center justify-center gap-2"
+            onClick={() => handleTestConnection(settings)}
+            disabled={isTesting || !settings.endpoint}
+          >
+            {isTesting ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Testing Connection...
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="w-4 h-4" />
+                Test Connection & Save
+              </>
+            )}
+          </Button>
+          {testError && (
+            <p className="text-xs text-destructive mt-3 bg-destructive/10 px-3 py-2 rounded-md border border-destructive/20 w-full text-center">
+              {testError}
+            </p>
+          )}
         </div>
       </DialogContent>
     </Dialog>
