@@ -1,46 +1,32 @@
 "use client";
 
+import Link from "next/link";
 import { ChartStudio } from "@/components/chart-studio";
 
 export default function HomePage() {
   return (
-    <div style={{ minHeight: "100vh", background: "var(--background)", display: "flex", flexDirection: "column" }}>
-      {/* Header */}
-      <header style={{
-        borderBottom: "1px solid var(--border)",
-        padding: "0 24px",
-        height: 60,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        background: "var(--surface)",
-        position: "sticky",
-        top: 0,
-        zIndex: 40,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{
-            width: 32, height: 32, borderRadius: 8,
-            background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 16, flexShrink: 0,
-          }}>📊</div>
-          <span style={{ fontWeight: 800, fontSize: 18, color: "var(--text)", letterSpacing: "-0.02em" }}>
+    <div className="bg-background h-screen w-screen flex flex-col overflow-hidden">
+      {/* Clean Header */}
+      <header className="border-b border-border bg-surface px-6 py-3 flex items-center justify-between shrink-0">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-accent text-white flex items-center justify-center text-sm font-bold">
+            📊
+          </div>
+          <span className="font-heading font-black text-xl text-foreground tracking-tight">
             ChartFlow
           </span>
-          <span style={{
-            fontSize: 10, fontWeight: 700, letterSpacing: "0.08em",
-            background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-            color: "#fff",
-            padding: "2px 8px", borderRadius: 20,
-          }}>BETA</span>
-        </div>
-        <p style={{ color: "var(--text-muted)", fontSize: 12, margin: 0 }}>
-          Upload JSON → Select Chart → Visualize instantly
-        </p>
+        </Link>
+        <nav className="hidden sm:flex items-center gap-6">
+          <Link href="/" className="text-sm font-bold text-accent">
+            Studio
+          </Link>
+          <Link href="/dashboard" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            Dashboard
+          </Link>
+        </nav>
       </header>
 
-      {/* Chart Studio */}
+      {/* Chart Studio Content */}
       <ChartStudio />
     </div>
   );

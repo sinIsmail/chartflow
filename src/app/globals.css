@@ -34,36 +34,37 @@
   --color-ring: var(--accent);
 }
 
-/* ── Design tokens ── */
+/* ── Design tokens (High-Fidelity Claymorphism) ── */
 :root {
-  --background: #0f0f13;
-  --surface:    #16161d;
-  --surface-2:  #1e1e28;
-  --border:     #2a2a38;
+  /* Dark mode clay base */
+  --background: #110e16;
+  --surface:    #1a1622;
+  --surface-2:  #251e30;
+  --border:     #352c45;
   --text:        #f1f1f5;
-  --text-muted:  #8888a8;
-  --accent:      #6366f1;
-  --accent-2:    #8b5cf6;
+  --text-muted:  #9c94ac;
+  --accent:      #7C3AED;
+  --accent-2:    #DB2777;
 
-  /* Chart palette — Indigo Storm (default) */
-  --chart-1: #6366f1;
-  --chart-2: #8b5cf6;
-  --chart-3: #06b6d4;
-  --chart-4: #3b82f6;
-  --chart-5: #a855f7;
-  --chart-6: #14b8a6;
+  /* Chart palette — Clay vibrant */
+  --chart-1: #7C3AED;
+  --chart-2: #DB2777;
+  --chart-3: #0EA5E9;
+  --chart-4: #10B981;
+  --chart-5: #F59E0B;
+  --chart-6: #ec4899;
 
-  --radius: 0.75rem;
+  --radius: 32px;
 }
 
-/* Light mode overrides */
+/* Light mode overrides (The "Candy Shop" Palette) */
 .light {
-  --background: #f8f8fc;
+  --background: #F4F1FA;
   --surface:    #ffffff;
-  --surface-2:  #f0f0f8;
-  --border:     #e2e2f0;
-  --text:        #111118;
-  --text-muted:  #6666a0;
+  --surface-2:  #EFEBF5;
+  --border:     #d9d4e3;
+  --text:        #332F3A;
+  --text-muted:  #635F69;
 }
 
 /* ── Base styles ── */
@@ -75,10 +76,14 @@ html.light { color-scheme: light; }
 body {
   background: var(--background);
   color: var(--text);
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-dm-sans), "Inter", system-ui, sans-serif;
   margin: 0;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-nunito), system-ui, sans-serif;
 }
 
 /* ── Scrollbar ── */
@@ -89,38 +94,13 @@ body {
 
 /* ── Animations ── */
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes scale-in {
-  from { opacity: 0; transform: scale(0.96); }
+  from { opacity: 0; transform: scale(0.92); }
   to   { opacity: 1; transform: scale(1); }
 }
-@keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position:  200% 0; }
-}
 
-.animate-fade-in   { animation: fade-in  0.3s ease forwards; }
-.animate-scale-in  { animation: scale-in 0.25s ease forwards; }
-
-/* Skeleton shimmer */
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--surface-2) 25%,
-    var(--border)    50%,
-    var(--surface-2) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: var(--radius);
-}
-
-/* ── Utility: glass card ── */
-.glass {
-  background: color-mix(in srgb, var(--surface) 80%, transparent);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-}
+.animate-fade-in   { animation: fade-in  0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-scale-in  { animation: scale-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }

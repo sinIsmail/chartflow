@@ -47,7 +47,7 @@ export interface TreemapNode {
 export function toTreemapData(chart: ChartData, colors: string[]): TreemapNode[] {
   const valKey = chart.series[0]?.key;
   return chart.data.map((row, i) => ({
-    name: String(row[chart.xKey]),
+    name: row[chart.xKey] ? String(row[chart.xKey]) : `Item ${i + 1}`,
     value: Number(row[valKey] ?? 0),
     fill: colors[i % colors.length],
   }));

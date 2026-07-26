@@ -16,8 +16,10 @@ import {
   AI_PROMPT_TEMPLATE,
   FIELD_DESCRIPTIONS,
 } from "@/lib/prompt-template";
+import { useSettings } from "@/hooks/use-settings";
 
 export function PromptDialog() {
+  const { allSettings, updateGlobalSettings } = useSettings();
   const [copied, setCopied] = useState<string | null>(null);
 
   const copy = (text: string, key: string) => {
@@ -49,7 +51,7 @@ export function PromptDialog() {
           <TabsList style={{ marginBottom: 12 }}>
             <TabsTrigger value="schema">Schema</TabsTrigger>
             <TabsTrigger value="example">Example JSON</TabsTrigger>
-            <TabsTrigger value="ai">AI Prompt</TabsTrigger>
+            <TabsTrigger value="ai">System Prompt</TabsTrigger>
           </TabsList>
 
           {/* Schema fields tab */}
@@ -106,28 +108,32 @@ export function PromptDialog() {
             </div>
           </TabsContent>
 
-          {/* AI Prompt tab */}
+          {/* System Prompt Editor tab */}
           <TabsContent value="ai" style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 12 }}>
-            <p style={{ color: "var(--text-muted)", fontSize: 13, margin: 0 }}>
-              Copy this prompt into ChatGPT, Claude, or Gemini with your data attached:
-            </p>
-            <div style={{ position: "relative" }}>
-              <pre style={{
-                background: "var(--surface-2)", border: "1px solid var(--border)",
-                borderRadius: 8, padding: 16, fontSize: 12, overflowX: "auto",
-                color: "var(--text)", margin: 0, lineHeight: 1.6, whiteSpace: "pre-wrap",
-              }}>
-                {AI_PROMPT_TEMPLATE}
-              </pre>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+              <p style={{ color: "var(--text-muted)", fontSize: 13, margin: 0 }}>
+                Customize the system prompt used by ChartFlow's AI extraction engine:
+              </p>
               <Button
-                size="sm" variant="outline"
-                onClick={() => copy(AI_PROMPT_TEMPLATE, "ai")}
-                style={{ position: "absolute", top: 8, right: 8, fontSize: 11 }}
-                aria-label="Copy AI prompt"
+                variant="ghost" size="sm" style={{ height: 24, fontSize: 10 }}
+                onClick={() => updateGlobalSettings({ systemPrompt: "" })}
               >
-                {copied === "ai" ? "✅ Copied!" : "Copy"}
+                Reset to Default
               </Button>
             </div>
+            
+            <textarea
+              style={{
+                flex: 1,
+                background: "var(--surface-2)", border: "1px solid var(--border)",
+                borderRadius: 8, padding: 16, fontSize: 12,
+                color: "var(--text)", margin: 0, lineHeight: 1.6,
+                fontFamily: "monospace", resize: "none", width: "100%", outline: "none"
+              }}
+              placeholder={AI_PROMPT_TEMPLATE}
+              value={allSettings.systemPrompt || ""}
+              onChange={(e) => updateGlobalSettings({ systemPrompt: e.target.value })}
+            />
           </TabsContent>
         </Tabs>
       </DialogContent>

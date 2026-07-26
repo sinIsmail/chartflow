@@ -1,10 +1,20 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Nunito, DM_Sans } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const nunito = Nunito({ 
+  subsets: ["latin"], 
+  variable: "--font-nunito",
+  weight: ["700", "800", "900"] 
+});
+
+const dmSans = DM_Sans({ 
+  subsets: ["latin"], 
+  variable: "--font-dm-sans",
+  weight: ["400", "500", "700"] 
+});
 
 export const metadata: Metadata = {
   title: "ChartFlow — Visual Data Studio",
@@ -32,7 +42,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={inter.variable}>
+      <body className={`${dmSans.variable} ${nunito.variable} font-sans`}>
         <TooltipProvider>
           {children}
           <Toaster richColors position="bottom-right" />
