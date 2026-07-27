@@ -230,8 +230,16 @@ export function ChartStudio() {
           )}
         </button>
 
+        {/* Mobile Sidebar Overlay */}
+        {isMobileMenuOpen && (
+          <div 
+            className="fixed inset-0 z-30 bg-black/80 backdrop-blur-sm lg:hidden animate-in fade-in-0"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+
         {/* Floating Sidebar Island */}
-        <aside className={`fixed inset-0 z-40 lg:static lg:w-[320px] flex-shrink-0 bg-surface border-r border-border p-5 flex flex-col gap-6 overflow-y-auto custom-scrollbar transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} w-[85%] h-full`}>
+        <aside className={`fixed inset-y-0 left-0 z-40 lg:static lg:w-[320px] flex-shrink-0 bg-surface border-r border-border p-5 flex flex-col gap-6 overflow-y-auto custom-scrollbar transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'} w-[85%] max-w-[320px]`}>
 
           {/* Upload & Saved Data */}
           <section>

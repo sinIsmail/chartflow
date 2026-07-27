@@ -75,12 +75,12 @@ export function SettingsDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon" className="w-8 h-8 rounded-full border-border bg-surface shadow-sm hover:bg-surface-2 hover:text-foreground transition-all" title="Settings">
+        <Button variant="outline" size="icon" className="w-8 h-8 rounded-full border-border/50 bg-surface shadow-sm hover:bg-surface-2 hover:text-foreground transition-all" title="Settings">
           <SettingsIcon className="w-4 h-4 text-muted-foreground" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden border-border shadow-2xl bg-surface">
-        <div className="p-6 pb-4 border-b border-border bg-surface-2">
+      <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden border-border/40 shadow-2xl bg-surface">
+        <div className="p-6 pb-4 border-b border-border/30 bg-surface-2/30">
           <DialogHeader>
             <DialogTitle className="text-xl font-heading font-bold">AI Configuration</DialogTitle>
             <DialogDescription className="text-muted-foreground text-sm mt-1.5">
@@ -104,7 +104,7 @@ export function SettingsDialog() {
                   setAvailableModels([]);
                 }}
               >
-                <SelectTrigger className="w-full h-10 bg-surface border-border shadow-sm focus:ring-accent">
+                <SelectTrigger className="w-full h-10 bg-surface border-border/50 shadow-sm focus:ring-accent/50">
                   <SelectValue placeholder="Select a profile" />
                 </SelectTrigger>
                 <SelectContent>
@@ -119,7 +119,7 @@ export function SettingsDialog() {
             
             <Button 
               variant="outline" 
-              className="h-10 w-10 p-0 border-border shadow-sm hover:bg-surface-2 hover:text-foreground text-muted-foreground transition-all"
+              className="h-10 w-10 p-0 border-border/50 shadow-sm hover:bg-surface-2 hover:text-foreground text-muted-foreground transition-all"
               onClick={handleCreateNewProfile}
               title="Add New Profile"
             >
@@ -146,14 +146,14 @@ export function SettingsDialog() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent/80" />
                   Profile Name
                 </label>
                 <input
                   type="text"
                   value={settings.name}
                   onChange={(e) => updateProfile(settings.id, { name: e.target.value })}
-                  className="w-full h-10 rounded-md border border-border bg-surface px-3 text-sm shadow-sm transition-colors focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent"
+                  className="w-full h-10 rounded-md border border-border/50 bg-surface/50 px-3 text-sm shadow-sm transition-colors focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50"
                 />
               </div>
 
@@ -166,7 +166,7 @@ export function SettingsDialog() {
                   value={settings.provider}
                   onValueChange={(val: LLMProvider) => updateProfile(settings.id, { provider: val })}
                 >
-                  <SelectTrigger className="h-10 border-border bg-surface shadow-sm focus:ring-accent">
+                  <SelectTrigger className="h-10 border-border/50 bg-surface/50 shadow-sm focus:ring-accent/50">
                     <SelectValue placeholder="Select provider" />
                   </SelectTrigger>
                   <SelectContent>
@@ -191,7 +191,7 @@ export function SettingsDialog() {
                 type="text"
                 value={settings.endpoint}
                 onChange={(e) => updateProfile(settings.id, { endpoint: e.target.value })}
-                className="w-full h-10 rounded-md border border-border bg-surface px-3 text-sm shadow-sm transition-colors focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent font-mono text-[13px]"
+                className="w-full h-10 rounded-md border border-border/50 bg-surface/50 px-3 text-sm shadow-sm transition-colors focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 font-mono text-[13px]"
               />
             </div>
             
@@ -207,7 +207,7 @@ export function SettingsDialog() {
                   value={settings.apiKey}
                   onChange={(e) => updateProfile(settings.id, { apiKey: e.target.value })}
                   placeholder="sk-..."
-                  className="w-full h-10 rounded-md border border-border bg-surface px-3 text-sm shadow-sm transition-colors focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent font-mono text-[13px] placeholder:text-muted-foreground"
+                  className="w-full h-10 rounded-md border border-border/50 bg-surface/50 px-3 text-sm shadow-sm transition-colors focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 font-mono text-[13px] placeholder:text-muted-foreground/40"
                 />
               </div>
 
@@ -221,7 +221,7 @@ export function SettingsDialog() {
                   list={`models-${settings.id}`}
                   value={settings.model}
                   onChange={(e) => updateProfile(settings.id, { model: e.target.value })}
-                  className="w-full h-10 rounded-md border border-border bg-surface px-3 text-sm shadow-sm transition-colors focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent font-mono text-[13px] placeholder:text-muted-foreground"
+                  className="w-full h-10 rounded-md border border-border/50 bg-surface/50 px-3 text-sm shadow-sm transition-colors focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 font-mono text-[13px] placeholder:text-muted-foreground/40"
                   placeholder="e.g. gpt-4o"
                 />
                 <datalist id={`models-${settings.id}`}>
@@ -235,7 +235,7 @@ export function SettingsDialog() {
         </div>
 
         {/* Footer */}
-        <div className="p-6 pt-4 border-t border-border bg-surface-2 flex flex-col items-center">
+        <div className="p-6 pt-4 border-t border-border/30 bg-surface-2/30 flex flex-col items-center">
           <Button 
             className="w-full h-11 text-sm font-bold bg-accent text-white hover:bg-accent/90 rounded-lg shadow-md transition-all flex items-center justify-center gap-2"
             onClick={() => handleTestConnection(settings)}
